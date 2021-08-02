@@ -17,8 +17,8 @@ warnings.filterwarnings("ignore")
 
 def nltk_data_downloader(sign):
     root_dir = os.getcwd()
-    os.mkdir(f"{root_dir}{sign}nltk_data")
-    os.chdir(f"{root_dir}{sign}nltk_data")
+    os.mkdir(f"{root_dir}{sign}nltk_data_for_app")
+    os.chdir(f"{root_dir}{sign}nltk_data_for_app")
     nltk.download()
     os.chdir(root_dir)
 
