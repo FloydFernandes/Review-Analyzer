@@ -12,8 +12,20 @@ import text2emotion as te
 import spacy
 from sklearn.feature_extraction.text import CountVectorizer
 import warnings
+import os
 warnings.filterwarnings("ignore")
-nltk.download()
+
+def nltk_data_downloader(sign):
+    root_dir = os.getcwd()
+    os.mkdir(f"{root_dir}{sign}nltk_data")
+    os.chdir(f"{root_dir}{sign}nltk_data")
+    nltk.download()
+    os.chdir(root_dir)
+
+try:
+    nltk_data_downloader("\\")
+except:
+    nltk_data_downloader("/")
 
 
 def avg_rating(data):
