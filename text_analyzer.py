@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from wordcloud import STOPWORDS
 import re
+import nltk
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from collections import Counter
@@ -12,7 +13,7 @@ import spacy
 from sklearn.feature_extraction.text import CountVectorizer
 import warnings
 warnings.filterwarnings("ignore")
-
+nltk.download()
 
 
 def avg_rating(data):
