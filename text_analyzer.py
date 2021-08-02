@@ -22,10 +22,7 @@ def nltk_data_downloader(sign):
     nltk.download()
     os.chdir(root_dir)
 
-try:
-    nltk_data_downloader("\\")
-except:
-    nltk_data_downloader("/")
+nltk_data_downloader("/")
 
 
 def avg_rating(data):
