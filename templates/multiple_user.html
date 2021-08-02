@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block body %}
+<form action="/features" method="POST">
+    <div class="container my-3">
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Paste your link here:</label>
+            <input type="text" class="form-control" name="review-link" id="exampleInputEmail1"
+                aria-describedby="emailHelp">
+            <div id="emailHelp" class="form-text">Paste the "all reviews" page link of the product that you will find on
+                amazon</div>
+        </div>
+
+        <button id="submit-btn" type="submit" class="btn btn-outline-dark" style="display: inline;" onclick="document.getElementById('submit-loading').style.display='block'; 
+            document.getElementById('submit-btn').style.display='none';
+            document.getElementById('loading-alert').style.display='block';
+            document.getElementById('link-avail').style.display='none'
+            ">
+            Submit</button>
+        <div id="submit-loading" class="spinner-border mb-3" style="width: 2rem; height: 2rem; display: none;"
+            role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <div id="loading-alert" class="alert alert-warning" role="alert" style="display:none; width:auto;">
+            <h4 class="alert-heading">Hey!</h4>
+            <p>The data is loading! it might take some time.</p>
+            <hr>
+            <p class="mb-0">Products with more reviews might take longer to load.</p>
+        </div>
+</form>
+</div>
+
+<div class="container">
+    <div id="link-avail" class="alert alert-info" role="alert" style="display: block; width:auto;">
+        <h4 class="alert-heading">Hi There!</h4>
+        <p>Welcome to the Review-Analyzer app.</p>
+        <p>Add a link to see more options to analyze the product</p>
+        <hr>
+        <p class="mb-0">Products with more reviews might take longer to load.</p>
+    </div>
+</div>
+
+
+
+
+{% endblock %}

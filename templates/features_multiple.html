@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block body %}
+
+<form action="/features" method="POST">
+    <div class="container my-3">
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Paste your link here:</label>
+            <input type="text" class="form-control" name="review-link" id="exampleInputEmail1"
+                aria-describedby="emailHelp">
+            <div id="emailHelp" class="form-text">Paste the "all reviews" page link of the product that you will find on amazon</div>
+        </div>
+
+        <button id="submit-btn" type="submit" class="btn btn-outline-dark" style="display: inline;" 
+            onclick="hideFunc()">
+            Submit</button>
+        <div id="submit-loading" class="spinner-border mb-3" style="width: 2rem; height: 2rem; display: none;"
+            role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <div id="loading-alert" class="alert alert-warning" role="alert" style="display:none; width:auto;">
+            <h4 class="alert-heading">Hey!</h4>
+            <p>The data is loading! it might take some time.</p>
+            <hr>
+            <p class="mb-0">Products with more reviews might take longer to load.</p>
+        </div>
+
+<div id="prod-success" class="container mt-3">
+
+        <div class="alert alert-success d-flex align-items-center" role="alert">
+            <div>
+              {{prod_name}}'s review is loaded. please click any option below.
+            </div>
+          </div>
+
+    
+</div>
+
+
+<div class="row row-cols-1 row-cols-md-2 g-4 mt-3">
+    <div class="col">
+        <div class="card w-75">
+            <div class="card-body">
+              <h5 class="card-title">Rating Analysis</h5>
+              <p class="card-text">Here you will find the analysis of the ratings in descriptive charts.</p>
+              <a href="/rating_analysis" class="btn btn-outline-dark">Check it out!</a>
+            </div>
+          </div>
+    </div>
+    <div class="col">
+        <div class="card w-75">
+            <div class="card-body">
+              <h5 class="card-title">Named Entity Recognition</h5>
+              <p class="card-text">We used NER here to find out what people like or dislike about this product.</p>
+              <a href="/ner" class="btn btn-outline-dark">Check it out!</a>
+            </div>
+          </div>
+    </div>
+    <div class="col">
+        <div class="card w-75">
+            <div class="card-body">
+              <h5 class="card-title">Wordclouds</h5>
+              <p class="card-text">See wordclouds of the most frequently occuring words.</p>
+              <a href="/wordcloud" class="btn btn-outline-dark">Check it out!</a>
+            </div>
+          </div>
+    </div>
+    <div class="col">
+        <div class="card w-75">
+            <div class="card-body">
+              <h5 class="card-title">Sentiment Analysis</h5>
+              <p class="card-text">Would you like to see what the sentiments of the reviewers are?</p>
+              <a href="/sentiment_analysis" class="btn btn-outline-dark">Check it out!</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+</form>
+</div>
+
+<script>
+    function hideFunc() {
+        document.getElementById('submit-loading').style.display='block'; 
+        document.getElementById('submit-btn').style.display='none';
+        document.getElementById('loading-alert').style.display='block';
+        document.getElementById('prod-success').style.display='none';
+
+    }
+
+</script>
+
+{% endblock %}

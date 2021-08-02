@@ -1,0 +1,294 @@
+{% extends 'base.html' %}
+{% block body %}
+
+<div class="container my-3 mb-5">
+    <table class="table">
+        <thead class="table-dark">
+            <tr>
+                <th scope="col">{{prod_name}}</th>
+                <th scope="col">Values</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for key, value in features.items() %}
+
+
+            <tr>
+                <td>{{key}}</td>
+                <td>{{value}}</td>
+            </tr>
+
+
+            {% endfor %}
+
+
+        </tbody>
+    </table>
+
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6 col-md-6 mb-5">
+            <div id="container1"></div>
+        </div>
+        <div class="col-sm-6 col-md-6 mb-5">
+            <div id="container2"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6 col-md-6 mb-5">
+            <div id="container3"></div>
+        </div>
+        <div class="col-sm-6 col-md-6 mb-5">
+            <div id="container4"></div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+    <!-- sentiment pie chart -->
+    <script type="text/javascript">
+        Highcharts.chart('container1', {
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie'
+            },
+            title: {
+                text: 'Sentiment in reviews:'
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            accessibility: {
+                point: {
+                    valueSuffix: '%'
+                }
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                    }
+                }
+            },
+            series: [{
+                name: 'Sentiments',
+                colorByPoint: true,
+                data: [{
+                    name: 'Positive',
+                    y: {{ features["Number of positive reviews"]}},
+                sliced: true,
+                selected: false
+        }, {
+            name: 'Neutral',
+            y: {{ features["Number of neutral reviews"]}}
+        }, {
+                name: 'Negative',
+                y: {{ features["Number of negative reviews"]}}
+        }]
+    }]
+});
+
+
+
+    </script>
+
+    <!-- Ratings -->
+    <script type="text/javascript">
+        Highcharts.chart('container2', {
+            chart: {
+                type: 'pie',
+                options3d: {
+                    enabled: true,
+                    alpha: 45,
+                    beta: 0
+                }
+            },
+            title: {
+                text: 'Ratings'
+            },
+            accessibility: {
+                point: {
+                    valueSuffix: '%'
+                }
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    depth: 35,
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.name}'
+                    }
+                }
+            },
+            series: [{
+                type: 'pie',
+                name: 'Ratings',
+                data: [
+                    ['1 star', {{ ratings[1.0]}}],
+            ['2 stars', {{ ratings[2.0]}}],
+            ['3 stars', {{ ratings[3.0]}}],
+            ['4 stars', {{ ratings[4.0]}}],
+            {
+                name: '5 stars',
+                y: {{ ratings[5.0]}},
+            sliced: true,
+            selected: false
+            },
+            
+        ]
+    }]
+});
+
+    </script>
+
+    <script type="text/javascript">
+
+        Highcharts.chart('container3', {
+    chart: {
+        type: 'column'
+    },
+    title: {
+        text: 'Ratings'
+    },
+
+    xAxis: {
+        type: 'category',
+        labels: {
+            rotation: -45,
+            style: {
+                fontSize: '13px',
+                fontFamily: 'Verdana, sans-serif'
+            }
+        }
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: 'Total ratings'
+        }
+    },
+    legend: {
+        enabled: false
+    },
+    tooltip: {
+        pointFormat: 'Ratings: <b>{point.y:.1f}</b>'
+    },
+    series: [{
+        name: 'Sentiments',
+        data: [
+            {% for i in range(ratings_count|length) %}
+    
+            [
+                "{{ratings_count[i][0]}}", {{ratings_count[i][1]}}
+            ],
+
+            {% endfor %}
+    ],
+        dataLabels: {
+            enabled: true,
+            rotation: -90,
+            color: '#FFFFFF',
+            align: 'right',
+            format: '{point.y:.1f}', // one decimal
+            y: 10, // 10 pixels down from the top
+            style: {
+                fontSize: '13px',
+                fontFamily: 'Verdana, sans-serif'
+            }
+        }
+    }]
+});
+
+
+    </script>
+
+
+    <script type="text/javascript">
+        Highcharts.chart('container4', {
+
+title: {
+    text: 'Ratings in the year, {{date[0]}}-{{date[1]}}'
+},
+
+yAxis: {
+    title: {
+        text: 'Number of ratings'
+    }
+},
+
+xAxis: {
+    accessibility: {
+        rangeDescription: 'Range: {{date[0]}} to {{date[1]}}'
+    }
+},
+
+legend: {
+    layout: 'vertical',
+    align: 'right',
+    verticalAlign: 'middle'
+},
+
+plotOptions: {
+    series: {
+        label: {
+            connectorAllowed: false
+        },
+        pointStart: {{date[0]}}
+    }
+},
+
+series: [{
+    name: 'Ratings',
+    data: [
+        {% for x in date[2] %}
+
+        {{x}},
+
+        {% endfor %}
+    ]
+}
+],
+
+responsive: {
+    rules: [{
+        condition: {
+            maxWidth: 500
+        },
+        chartOptions: {
+            legend: {
+                layout: 'horizontal',
+                align: 'center',
+                verticalAlign: 'bottom'
+            }
+        }
+    }]
+}
+
+});
+        
+
+    </script>
+
+
+
+
+
+    {% endblock %}

@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+{% block body %}
+
+<div class="container mx-auto my-3">
+    <div class="row justify-content-md-center">
+        <div class="col col-md-auto mb-1">
+            <button type="button" class="btn btn-outline-success" onclick="document.getElementById('container1').style.display='block';
+            document.getElementById('container2').style.display='none';
+            document.getElementById('container3').style.display='none';">
+                Positive words
+            </button>
+        </div>
+        <div class="col col-md-auto mb-1">
+            <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('container2').style.display='block';
+    document.getElementById('container1').style.display='none';
+    document.getElementById('container3').style.display='none';">
+                Neutral words</button>
+        </div>
+        <div class="col col-md-auto mb-1">
+            <button type="button" class="btn btn-outline-danger" onclick="document.getElementById('container3').style.display='block';
+    document.getElementById('container1').style.display='none';
+    document.getElementById('container2').style.display='none';">
+                Negative words</button>
+        </div>
+    </div>
+
+<div class="container my-3">
+    <div class="row">
+        <div id="container1" style="height: 800px;"></div>
+    </div>
+    <div class="row">
+        <div id="container2" style="height: 800px; display: none"></div>
+    </div>
+    <div class="row">
+        <div id="container3" style="height: 800px; display: none"></div>
+    </div>
+
+
+
+
+<script type="text/javascript">
+    var series = [
+        {% for x in pos_words %}
+            "{{x}}",
+        {% endfor %}
+    ];
+var sortedWeights =  [
+    {% for x in pos_vals %}
+            {{x}},
+        {% endfor %}
+];
+
+var result = series.map(function(word, i) {
+return {
+name: word,
+weight: sortedWeights[i]
+};
+});
+
+
+
+    Highcharts.chart('container1', {
+        accessibility: {
+            screenReaderSection: {
+                beforeChartFormat: '<h5>{chartTitle}</h5>' +
+                    '<div>{chartSubtitle}</div>' +
+                    '<div>{chartLongdesc}</div>' +
+                    '<div>{viewTableButton}</div>'
+            }
+        },
+        series: [{
+            type: 'wordcloud',
+            data: result,
+            name: 'Occurrences'
+        }],
+        title: {
+            text: 'Maximum words in positive reviews'
+        }
+    });
+</script>
+
+<script type="text/javascript">
+    var series = [
+        {% for x in neu_words %}
+            "{{x}}",
+        {% endfor %}
+    ];
+var sortedWeights =  [
+    {% for x in neu_vals %}
+            {{x}},
+        {% endfor %}
+];
+
+var result = series.map(function(word, i) {
+return {
+name: word,
+weight: sortedWeights[i]
+};
+});
+
+
+
+    Highcharts.chart('container2', {
+        accessibility: {
+            screenReaderSection: {
+                beforeChartFormat: '<h5>{chartTitle}</h5>' +
+                    '<div>{chartSubtitle}</div>' +
+                    '<div>{chartLongdesc}</div>' +
+                    '<div>{viewTableButton}</div>'
+            }
+        },
+        series: [{
+            type: 'wordcloud',
+            data: result,
+            name: 'Occurrences'
+        }],
+        title: {
+            text: 'Maximum words in neutral reviews'
+        }
+    });
+</script>
+
+<script type="text/javascript">
+    var series = [
+        {% for x in neg_words %}
+            "{{x}}",
+        {% endfor %}
+    ];
+var sortedWeights =  [
+    {% for x in neg_vals %}
+            {{x}},
+        {% endfor %}
+];
+
+var result = series.map(function(word, i) {
+return {
+name: word,
+weight: sortedWeights[i]
+};
+});
+
+
+
+    Highcharts.chart('container3', {
+        accessibility: {
+            screenReaderSection: {
+                beforeChartFormat: '<h5>{chartTitle}</h5>' +
+                    '<div>{chartSubtitle}</div>' +
+                    '<div>{chartLongdesc}</div>' +
+                    '<div>{viewTableButton}</div>'
+            }
+        },
+        series: [{
+            type: 'wordcloud',
+            data: result,
+            name: 'Occurrences'
+        }],
+        title: {
+            text: 'Maximum words in negative reviews'
+        }
+    });
+</script>
+
+
+
+
+    {% endblock %}

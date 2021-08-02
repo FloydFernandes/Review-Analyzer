@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+{% block body %}
+<form action="/features_single" method="POST">
+    <div class="container my-3">
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Add your text here:</label>
+            <input type="text" autocomplete="off" class="form-control" name="user-text" id="exampleInputEmail1"
+                aria-describedby="emailHelp">
+            <div id="emailHelp" class="form-text">Add a review of the product or text of your own to see this app work
+                on what you say!</div>
+        </div>
+
+        <button id="submit-btn" type="submit" class="btn btn-outline-dark" style="display: inline;" onclick="document.getElementById('submit-loading').style.display='block'; 
+            document.getElementById('submit-btn').style.display='none'
+            document.getElementById('loading-alert').style.display='block'">
+            Submit</button>
+        <div id="submit-loading" class="spinner-border mb-3" style="width: 2rem; height: 2rem; display: none;"
+            role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <div id="loading-alert" class="alert alert-warning" role="alert" style="display:none; width:auto;">
+            <h4 class="alert-heading">Hey!</h4>
+            <p>The app is loading!</p>
+            <hr>
+            <p class="mb-0">Trying to analyse your text!.</p>
+        </div>
+</form>
+</div>
+<!-- <div class="row row-cols-1 row-cols-md-2 g-4 mt-3">
+            <div class="col">
+                <div class="card w-75">
+                    <div class="card-body">
+                      <h5 class="card-title">Sentiment Analysis</h5>
+                      <p class="card-text">Find out the sentiments in the text provided by you.</p>
+                      <a href="/rating_analysis" class="btn btn-outline-dark">Check it out!</a>
+                    </div>
+                  </div>
+            </div>
+            <div class="col">
+                <div class="card w-75">
+                    <div class="card-body">
+                      <h5 class="card-title">Emotion Mining</h5>
+                      <p class="card-text">See what the algorithm thinks your emotions in this text are!</p>
+                      <a href="#" class="btn btn-outline-dark">Check it out!</a>
+                    </div>
+                  </div>
+            </div>
+ 
+        </div> -->
+        <div class="container">
+        <h5 style="text-align: center;">Your text will be seen here:</h5>
+        <p style="text-align: center;">{{text}}</p>
+        <hr>
+        </div>
+
+ 
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-sm-6 col-md-6 mb-5">
+                <div id="container1"></div>
+            </div>
+            <div class="col-sm-6 col-md-6 mb-5">
+                <div id="container2"></div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+
+    <script type="text/javascript">
+
+        Highcharts.chart('container1', {
+    chart: {
+        type: 'column'
+    },
+    title: {
+        text: '<b>Sentiment in your text using nltk "Vader".<b>'
+    },
+
+    xAxis: {
+        type: 'category',
+        labels: {
+            rotation: -45,
+            style: {
+                fontSize: '13px',
+                fontFamily: 'Verdana, sans-serif'
+            }
+        }
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: 'Sentiment Score'
+        }
+    },
+    legend: {
+        enabled: false
+    },
+    tooltip: {
+        pointFormat: 'Score: <b>{point.y:.1f}</b>'
+    },
+    series: [{
+        name: 'Sentiments',
+        color: "#ff6666",
+        data: [
+
+            {% for key, value in sentiment.items() %}
+
+            ["{{key}}", {{value}}],
+
+            {% endfor %}
+    ],
+        dataLabels: {
+            enabled: true,
+            rotation: -90,
+            color: '#FFFFFF',
+            align: 'right',
+            format: '{point.y:.1f}', // one decimal
+            y: 10, // 10 pixels down from the top
+            style: {
+                fontSize: '13px',
+                fontFamily: 'Verdana, sans-serif'
+            }
+        }
+    }]
+});
+
+
+    </script>
+
+<script type="text/javascript">
+
+Highcharts.chart('container2', {
+    chart: {
+        plotBackgroundColor: null,
+        plotBorderWidth: null,
+        plotShadow: false,
+        type: 'pie'
+    },
+    title: {
+        text: '<b>Emotions in your text<b>'
+    },
+    tooltip: {
+        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+    },
+    accessibility: {
+        point: {
+            valueSuffix: '%'
+        }
+    },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+                enabled: true,
+                format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+            }
+        }
+    },
+    series: [{
+        name: 'Emotions',
+
+        data: [{
+            name: 'Happy',
+            color: "#99ff66",
+            y: {{emotion["Happy"]}},
+            sliced: true,
+            selected: true
+        }, {
+            name: 'Angry',
+            color: "#ff6666",
+            y: {{emotion["Angry"]}}
+        }, {
+            name: 'Surprise',
+            color: "#ffff99",
+            y: {{emotion["Surprise"]}}
+        }, {
+            name: 'Sad',
+            color: "#6699ff",
+            y: {{emotion["Sad"]}}
+        }, {
+            name: 'Fear',
+            color: "#0099cc",
+            y: {{emotion["Fear"]}}
+        }]
+    }]
+});
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

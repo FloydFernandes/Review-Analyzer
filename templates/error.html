@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block body %}
+<div class="container my-5">
+    <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">We are really Sorry :(</h4>
+        <p>
+            The app ran into an error and we could not make sense of the reviews :(
+            <br>
+            <br>Reasons for this error:
+        <ul>
+            <li>The link was not correct</li>
+            <li>The product might have a few reviews in different language that the app might not understand</li>
+        </ul>
+        </p>
+        <hr>
+        <p class="mb-0">You can paste the "all reviews" page link of any product and try again.
+            <br> If you still get an error you can try with another product.
+        </p>
+        <br>
+        <a href="/" style="color: black;"><b>Return</b></a>
+    </div>
+</div>
+
+
+
+{% endblock %}

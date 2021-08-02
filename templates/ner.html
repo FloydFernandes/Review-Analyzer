@@ -1,0 +1,398 @@
+{% extends 'base.html' %}
+{% block body %}
+
+
+
+<div class="container my-3">
+    <!-- <div class="row"> -->
+        <h3 style="text-align: center;">Single words:</h3>
+        <div class="row">
+            <div id="container1" , style="height: 400px;"></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6 col-md-6 mb-5">
+            <div id="container2" , style="height: 400px;"></div>
+            </div>
+        
+            <div class="col-sm-6 col-md-6 mb-5">
+                <div id="container3" , style="height: 400px;"></div>
+            </div>
+            <h3 style="text-align: center;">Ngram (Multiple words):</h3>
+        </div>
+        <div class="row my-3">
+            <div id="container4" , style="height: 400px;"></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6 col-md-6 mb-5">
+            <div id="container5" , style="height: 400px;"></div>
+            </div>
+        
+            <div class="col-sm-6 col-md-6 mb-5">
+                <div id="container6" , style="height: 400px;"></div>
+            </div>
+
+        </div>
+    </div>
+
+    
+
+    <script type="text/javascript">
+
+    var pos = '#66ff66'
+    Highcharts.chart('container1', {
+    chart: {
+        type: 'bar'
+    },
+    title: {
+        text: '10 most frequently occuring words in 4 & 5 star ratings'
+    },
+    xAxis: {
+        categories: [
+            {% for x in ner_pos_keys %}
+            "{{x}}",
+
+            {% endfor %}
+        ],
+        title: {
+            text: null
+        }
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: 'Word Count',
+            align: 'high'
+        },
+        labels: {
+            overflow: 'justify'
+        }
+    },
+    tooltip: {
+        valueSuffix: ' words'
+    },
+    plotOptions: {
+        bar: {
+            dataLabels: {
+                enabled: true
+            }
+        }
+    },
+    legend: false,
+    credits: {
+        enabled: false
+    },
+    series: [{
+        name: 'Number of words',
+        color: pos,
+        data: [
+            {% for x in ner_pos_values %}
+
+            {{x}}, 
+
+            {% endfor %}
+        ]
+    }]
+});
+    </script>
+
+<script type="text/javascript">
+
+    Highcharts.chart('container2', {
+    chart: {
+        type: 'bar'
+    },
+    title: {
+        text: '10 most frequently occuring words in 3 star ratings'
+    },
+    xAxis: {
+        categories: [
+            {% for x in ner_neu_keys %}
+            "{{x}}",
+
+            {% endfor %}
+        ],
+        title: {
+            text: null
+        }
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: 'Word Count',
+            align: 'high'
+        },
+        labels: {
+            overflow: 'justify'
+        }
+    },
+    tooltip: {
+        valueSuffix: ' words'
+    },
+    plotOptions: {
+        bar: {
+            dataLabels: {
+                enabled: true
+            }
+        }
+    },
+    legend: false,
+    credits: {
+        enabled: false
+    },
+    series: [{
+        name: 'Number of words',
+
+        data: [
+            {% for x in ner_neu_values %}
+
+            {{x}}, 
+
+            {% endfor %}
+        ]
+    }]
+});
+    </script>
+
+
+<script type="text/javascript">
+
+    var neg = "#ff471a"
+    Highcharts.chart('container3', {
+    chart: {
+        type: 'bar'
+    },
+    title: {
+        text: '10 most frequently occuring words in 1 & 2 star ratings'
+    },
+    xAxis: {
+        categories: [
+            {% for x in ner_neg_keys %}
+            "{{x}}",
+
+            {% endfor %}
+        ],
+        title: {
+            text: null
+        }
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: 'Word Count',
+            align: 'high'
+        },
+        labels: {
+            overflow: 'justify'
+        }
+    },
+    tooltip: {
+        valueSuffix: ' words'
+    },
+    plotOptions: {
+        bar: {
+            dataLabels: {
+                enabled: true
+            }
+        }
+    },
+    legend: false,
+    credits: {
+        enabled: false
+    },
+    series: [{
+        name: 'Number of words',
+        color: neg,
+        data: [
+            {% for x in ner_neg_values %}
+
+            {{x}}, 
+
+            {% endfor %}
+        ]
+    }]
+});
+    </script>
+
+
+
+
+<script type="text/javascript">
+
+    var pos = '#9999ff'
+    Highcharts.chart('container4', {
+    chart: {
+        type: 'bar'
+    },
+    title: {
+        text: '10 most frequently occuring words (together) in 4 & 5 star ratings'
+    },
+    xAxis: {
+        categories: [
+            {% for x in ngram_pos_keys %}
+            "{{x}}",
+
+            {% endfor %}
+        ],
+        title: {
+            text: null
+        }
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: 'Word Count',
+            align: 'high'
+        },
+        labels: {
+            overflow: 'justify'
+        }
+    },
+    tooltip: {
+        valueSuffix: ' words'
+    },
+    plotOptions: {
+        bar: {
+            dataLabels: {
+                enabled: true
+            }
+        }
+    },
+    legend: false,
+    credits: {
+        enabled: false
+    },
+    series: [{
+        name: 'Number of words',
+        color: pos,
+        data: [
+            {% for x in ngram_pos_values %}
+
+            {{x}}, 
+
+            {% endfor %}
+        ]
+    }]
+});
+    </script>
+
+<script type="text/javascript">
+
+    Highcharts.chart('container5', {
+    chart: {
+        type: 'bar'
+    },
+    title: {
+        text: '10 most frequently occuring words (together) in 3 star ratings'
+    },
+    xAxis: {
+        categories: [
+            {% for x in ngram_neu_keys %}
+            "{{x}}",
+
+            {% endfor %}
+        ],
+        title: {
+            text: null
+        }
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: 'Word Count',
+            align: 'high'
+        },
+        labels: {
+            overflow: 'justify'
+        }
+    },
+    tooltip: {
+        valueSuffix: ' words'
+    },
+    plotOptions: {
+        bar: {
+            dataLabels: {
+                enabled: true
+            }
+        }
+    },
+    legend: false,
+    credits: {
+        enabled: false
+    },
+    series: [{
+        name: 'Number of words',
+        color: "#ff3399",
+        data: [
+            {% for x in ngram_neu_values %}
+
+            {{x}}, 
+
+            {% endfor %}
+        ]
+    }]
+});
+    </script>
+
+
+<script type="text/javascript">
+
+    var neg = "#ffcc66"
+    Highcharts.chart('container6', {
+    chart: {
+        type: 'bar'
+    },
+    title: {
+        text: '10 most frequently occuring words (together) in 1 & 2 star ratings'
+    },
+    xAxis: {
+        categories: [
+            {% for x in ngram_neg_keys %}
+            "{{x}}",
+
+            {% endfor %}
+        ],
+        title: {
+            text: null
+        }
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: 'Word Count',
+            align: 'high'
+        },
+        labels: {
+            overflow: 'justify'
+        }
+    },
+    tooltip: {
+        valueSuffix: ' words'
+    },
+    plotOptions: {
+        bar: {
+            dataLabels: {
+                enabled: true
+            }
+        }
+    },
+    legend: false,
+    credits: {
+        enabled: false
+    },
+    series: [{
+        name: 'Number of words',
+        color: neg,
+        data: [
+            {% for x in ngram_neg_values %}
+
+            {{x}}, 
+
+            {% endfor %}
+        ]
+    }]
+});
+    </script>
+
+
+
+    {% endblock %}
