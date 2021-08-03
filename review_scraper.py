@@ -21,8 +21,8 @@ def get_df(page):
 
     iterations = 1
     
-    #limit to 90
-    while page_available and len(review_list) <= 80:
+    #limit to 40
+    while page_available and len(review_list) <= 40:
     
         if page_number < 2:
             soup = getlink(page, page_number="")
