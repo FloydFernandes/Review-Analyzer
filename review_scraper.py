@@ -20,7 +20,8 @@ def get_df(page):
     page_available = True
 
     iterations = 1
-
+    
+    #limit to 100
     while page_available and len(names_list) <= 100:
     
         if page_number < 2:
