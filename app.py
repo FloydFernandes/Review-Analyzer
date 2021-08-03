@@ -14,7 +14,7 @@ analysis = {}
 
 @app.route('/features', methods=['GET', 'POST'])
 def features():
-
+    global analysis
     if request.method == "POST":
         try:
             if request.form["review-link"] == "":
@@ -155,7 +155,7 @@ def features():
 
 @app.route('/rating_analysis')
 def rating_analysis():
-
+    global analysis
 
     product_name = analysis["product_name"]
 
@@ -191,6 +191,7 @@ def rating_analysis():
 
 @app.route('/sentiment_analysis')
 def sentiment_analysis():
+    global analysis
 
     product_name = analysis["product_name"]
 
@@ -269,7 +270,7 @@ def single_user_features():
 
 @app.route('/ner')
 def ner():
-
+    global analysis
     ner_pos_labels = analysis["ner_pos_labels"]
     ner_pos_val = analysis["ner_pos_val"]
 
@@ -306,6 +307,7 @@ def ner():
 
 @app.route('/wordcloud')
 def word_cloud():
+    global analysis
     pos_list = analysis["pos_list"]
     neg_list = analysis["neg_list"]
     neu_list= analysis["neu_list"]
