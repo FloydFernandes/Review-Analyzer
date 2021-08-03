@@ -78,7 +78,7 @@ def rating_value_counter(data):
     
 
 def emotion_mining(data):
-    df = data.iloc[:20,:]
+    df = data.iloc[:10,:]
     
     emotion_list = []
     
