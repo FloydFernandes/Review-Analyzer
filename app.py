@@ -175,7 +175,7 @@ def rating_analysis():
 
     rating = analysis["rating"]
 
-    features = {"Number of reviews (limit 100)":data_len,"Number of positive reviews":pos_rev_count,
+    features = {"Number of reviews (limit 90)":data_len,"Number of positive reviews":pos_rev_count,
     "Number of neutral reviews":neu_rev_count, "Number of negative reviews":neg_rev_count,
     "Average rating":avg_rating}
 
