@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 from wordcloud import STOPWORDS
 import re
-import nltk
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from collections import Counter
@@ -12,17 +11,8 @@ import text2emotion as te
 import spacy
 from sklearn.feature_extraction.text import CountVectorizer
 import warnings
-import os
 warnings.filterwarnings("ignore")
 
-def nltk_data_downloader(sign):
-    root_dir = os.getcwd()
-    os.mkdir(f"{root_dir}{sign}nltk_data_for_app")
-    os.chdir(f"{root_dir}{sign}nltk_data_for_app")
-    nltk.download()
-    os.chdir(root_dir)
-
-nltk_data_downloader("/")
 
 
 def avg_rating(data):
