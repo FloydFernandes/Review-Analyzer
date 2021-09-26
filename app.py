@@ -190,23 +190,73 @@ def single_user_features():
 @app.route('/ner')
 def ner():
 
-    ner_pos_labels = analysis["ner_pos_labels"]
-    ner_pos_val = analysis["ner_pos_val"]
+    ner_pos_data = text_analyzer.ner_analysis(data.loc[(data['Rating'] >= 4)])
+    ner_pos_labels = [x[0] for x in ner_pos_data]
+    ner_pos_val = [x[1] for x in ner_pos_data]
+    # analysis["ner_pos_labels"] = ner_pos_labels
+    # analysis["ner_pos_val"] = ner_pos_val
 
-    ner_neu_labels = analysis["ner_neu_labels"]
-    ner_neu_val = analysis["ner_neu_val"]
+    try:
+        ner_neu_data = text_analyzer.ner_analysis(data.loc[(data['Rating'] == 3)])
+        ner_neu_labels = [x[0] for x in ner_neu_data]
+        ner_neu_val = [x[1] for x in ner_neu_data]
+        # analysis["ner_neu_labels"] = ner_neu_labels
+        # analysis["ner_neu_val"] = ner_neu_val
+    except:
+        ner_neu_data = text_analyzer.ner_analysis(sentiment_data.loc[(sentiment_data["Sentiment_VADER"] == "Neutral")])
+        ner_neu_labels = [x[0] for x in ner_neu_data]
+        ner_neu_val = [x[1] for x in ner_neu_data]
+        # analysis["ner_neu_labels"] = ner_neu_labels
+        # analysis["ner_neu_val"] = ner_neu_val
 
-    ner_neg_labels = analysis["ner_neg_labels"]
-    ner_neg_val = analysis["ner_neg_val"] 
+    ner_neg_data = text_analyzer.ner_analysis(data.loc[(data['Rating'] < 3)])
+    ner_neg_labels = [x[0] for x in ner_neg_data]
+    ner_neg_val = [x[1] for x in ner_neg_data]
+    # analysis["ner_neg_labels"] = ner_neg_labels
+    # analysis["ner_neg_val"] = ner_neg_val
 
-    ngram_pos_labels = analysis["ngram_pos_labels"]
-    ngram_pos_val = analysis["ngram_pos_val"]
+    ngram_pos_data = text_analyzer.ngram_words(data.loc[(data['Rating'] > 3)], 2, 3)
+    ngram_pos_labels = [x[0] for x in ngram_pos_data]
+    ngram_pos_val = [x[1] for x in ngram_pos_data]
+    # analysis["ngram_pos_labels"] = ngram_pos_labels
+    # analysis["ngram_pos_val"] = ngram_pos_val
 
-    ngram_neu_labels = analysis["ngram_neu_labels"]
-    ngram_neu_val = analysis["ngram_neu_val"]
+    try:
+        ngram_neu_data = text_analyzer.ngram_words(data.loc[(data['Rating'] == 3)], 2, 3)
+        ngram_neu_labels = [x[0] for x in ngram_neu_data]
+        ngram_neu_val = [x[1] for x in ngram_neu_data]
+        # analysis["ngram_neu_labels"] = ngram_neu_labels
+        # analysis["ngram_neu_val"] = ngram_neu_val
+    except:
+        ngram_neu_data = text_analyzer.ngram_words(sentiment_data.loc[(sentiment_data["Sentiment_VADER"] == "Neutral")], 2, 3)
+        ngram_neu_labels = [x[0] for x in ngram_neu_data]
+        ngram_neu_val = [x[1] for x in ngram_neu_data]
+        # analysis["ngram_neu_labels"] = ngram_neu_labels
+        # analysis["ngram_neu_val"] = ngram_neu_val
 
-    ngram_neg_labels = analysis["ngram_neg_labels"]
-    ngram_neg_val = analysis["ngram_neg_val"]
+    ngram_neg_data = text_analyzer.ngram_words(data.loc[(data['Rating'] < 3)], 2, 3)
+    ngram_neg_labels = [x[0] for x in ngram_neg_data]
+    ngram_neg_val = [x[1] for x in ngram_neg_data]
+    # analysis["ngram_neg_labels"] = ngram_neg_labels
+    # analysis["ngram_neg_val"] = ngram_neg_val
+
+    # ner_pos_labels = analysis["ner_pos_labels"]
+    # ner_pos_val = analysis["ner_pos_val"]
+
+    # ner_neu_labels = analysis["ner_neu_labels"]
+    # ner_neu_val = analysis["ner_neu_val"]
+
+    # ner_neg_labels = analysis["ner_neg_labels"]
+    # ner_neg_val = analysis["ner_neg_val"] 
+
+    # ngram_pos_labels = analysis["ngram_pos_labels"]
+    # ngram_pos_val = analysis["ngram_pos_val"]
+
+    # ngram_neu_labels = analysis["ngram_neu_labels"]
+    # ngram_neu_val = analysis["ngram_neu_val"]
+
+    # ngram_neg_labels = analysis["ngram_neg_labels"]
+    # ngram_neg_val = analysis["ngram_neg_val"]
 
     return render_template("ner.html", 
     ner_pos_keys = ner_pos_labels,
@@ -226,9 +276,15 @@ def ner():
 
 @app.route('/wordcloud')
 def word_cloud():
-    pos_list = analysis["pos_list"]
-    neg_list = analysis["neg_list"]
-    neu_list= analysis["neu_list"]
+
+    pos_list = text_analyzer.lemma_words_para(data[data['Rating'] > 3])
+    # analysis["pos_list"] = pos_list
+
+
+    neg_list = text_analyzer.lemma_words_para(data[data['Rating'] < 3])
+    neu_list= text_analyzer.lemma_words_para(data[data['Sentiment_VADER'] == 'Neutral'])
+    # analysis["neg_list"] = neg_list
+    # analysis["neu_list"] = neu_list
 
     return render_template("wordcloud.html",
     pos_words=pos_list[0], pos_vals = pos_list[1],
