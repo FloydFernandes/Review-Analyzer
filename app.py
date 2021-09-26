@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 import review_scraper as rs
 import text_analyzer
+import emotion
 
 
 app = Flask(__name__)
@@ -14,28 +15,32 @@ analysis = {}
 
 @app.route('/features', methods=['GET', 'POST'])
 def features():
-    global analysis
+    # Getting the table name
     if request.method == "POST":
         try:
+            # Throw error if empty 
             if request.form["review-link"] == "":
                 return render_template("error.html")
+
+            # Get link
             else:
                 page = request.form["review-link"]
 
-            # Product name:
-                get_name = page.split("/")
+                # Get product name:
+                get_name = page.split("/")        
                 product_name = get_name[3]
-                analysis["product_name"] = product_name
+                analysis["product_name"] = product_name # global dict -> analysis
 
+                # Scrape and send the data to global scope
+                global data
                 data = rs.get_df(page)
-                data_len = len(data["Review_content"])
-                
-                analysis["data_len"] = data_len
+                print("data scraped")
 
+                # Cleaning the text of each review
                 data["cleaned_review"] = data["Review_content"].apply(lambda x: text_analyzer.text_cleaner(x))
+                print("data cleaned")
                 
-
-
+                global sentiment_data
                 sentiment_data = text_analyzer.sentiment_analysis(data)
 
                 pos_rev_count = text_analyzer.get_positive(sentiment_data)
@@ -44,107 +49,6 @@ def features():
                 analysis["pos_count"] = pos_rev_count 
                 analysis["neg_count"] = neg_rev_count 
                 analysis["neu_count"] = neu_rev_count 
-                
-
-
-                avg_rating = text_analyzer.avg_rating(data)
-                analysis["avg_rating"] = avg_rating 
-
-
-                rating = data["Rating"].value_counts()
-                analysis["rating"] = rating
-
-                emotion_data = text_analyzer.emotion_mining(data)
-
-
-                names_of_reviewers = [x["Name"] for x in emotion_data]
-                analysis["names_of_reviewers"] = names_of_reviewers
-
-
-
-                sad = [x["Sad"] for x in emotion_data]
-                angry = [x["Angry"] for x in emotion_data]
-                happy = [x["Happy"] for x in emotion_data]
-                surprise = [x["Surprise"] for x in emotion_data] 
-                fear = [x["Fear"] for x in emotion_data]
-                analysis["sad"] = sad
-                analysis["angry"] = angry
-                analysis["happy"] = happy
-                analysis["surprise"] =surprise
-                analysis["fear"] = fear
-
-
-                pos_list = text_analyzer.lemma_words_para(data[data['Rating'] > 3])
-                analysis["pos_list"] = pos_list
-
-
-                neg_list = text_analyzer.lemma_words_para(data[data['Rating'] < 3])
-                neu_list= text_analyzer.lemma_words_para(data[data['Sentiment_VADER'] == 'Neutral'])
-                analysis["neg_list"] = neg_list
-                analysis["neu_list"] = neu_list
-
-
-                rating_counter = text_analyzer.rating_value_counter(data)
-                analysis["rating_counter"] = rating_counter
-
-
-                extreme_sent = text_analyzer.extreme_sentiments(data)
-                analysis["extreme_sent"] = extreme_sent
-
-                ner_pos_data = text_analyzer.ner_analysis(data.loc[(data['Rating'] >= 4)])
-                ner_pos_labels = [x[0] for x in ner_pos_data]
-                ner_pos_val = [x[1] for x in ner_pos_data]
-                analysis["ner_pos_labels"] = ner_pos_labels
-                analysis["ner_pos_val"] = ner_pos_val
-
-                try:
-                    ner_neu_data = text_analyzer.ner_analysis(data.loc[(data['Rating'] == 3)])
-                    ner_neu_labels = [x[0] for x in ner_neu_data]
-                    ner_neu_val = [x[1] for x in ner_neu_data]
-                    analysis["ner_neu_labels"] = ner_neu_labels
-                    analysis["ner_neu_val"] = ner_neu_val
-                except:
-                    ner_neu_data = text_analyzer.ner_analysis(sentiment_data.loc[(sentiment_data["Sentiment_VADER"] == "Neutral")])
-                    ner_neu_labels = [x[0] for x in ner_neu_data]
-                    ner_neu_val = [x[1] for x in ner_neu_data]
-                    analysis["ner_neu_labels"] = ner_neu_labels
-                    analysis["ner_neu_val"] = ner_neu_val
-
-                ner_neg_data = text_analyzer.ner_analysis(data.loc[(data['Rating'] < 3)])
-                ner_neg_labels = [x[0] for x in ner_neg_data]
-                ner_neg_val = [x[1] for x in ner_neg_data]
-                analysis["ner_neg_labels"] = ner_neg_labels
-                analysis["ner_neg_val"] = ner_neg_val
-
-                ngram_pos_data = text_analyzer.ngram_words(data.loc[(data['Rating'] > 3)], 2, 3)
-                ngram_pos_labels = [x[0] for x in ngram_pos_data]
-                ngram_pos_val = [x[1] for x in ngram_pos_data]
-                analysis["ngram_pos_labels"] = ngram_pos_labels
-                analysis["ngram_pos_val"] = ngram_pos_val
-
-                try:
-                    ngram_neu_data = text_analyzer.ngram_words(data.loc[(data['Rating'] == 3)], 2, 3)
-                    ngram_neu_labels = [x[0] for x in ngram_neu_data]
-                    ngram_neu_val = [x[1] for x in ngram_neu_data]
-                    analysis["ngram_neu_labels"] = ngram_neu_labels
-                    analysis["ngram_neu_val"] = ngram_neu_val
-                except:
-                    ngram_neu_data = text_analyzer.ngram_words(sentiment_data.loc[(sentiment_data["Sentiment_VADER"] == "Neutral")], 2, 3)
-                    ngram_neu_labels = [x[0] for x in ngram_neu_data]
-                    ngram_neu_val = [x[1] for x in ngram_neu_data]
-                    analysis["ngram_neu_labels"] = ngram_neu_labels
-                    analysis["ngram_neu_val"] = ngram_neu_val
-
-                ngram_neg_data = text_analyzer.ngram_words(data.loc[(data['Rating'] < 3)], 2, 3)
-                ngram_neg_labels = [x[0] for x in ngram_neg_data]
-                ngram_neg_val = [x[1] for x in ngram_neg_data]
-                analysis["ngram_neg_labels"] = ngram_neg_labels
-                analysis["ngram_neg_val"] = ngram_neg_val
-
-
-                date_data = text_analyzer.date_analyzer(data)
-                analysis["date_data"] = date_data
-
 
                 return render_template("features_multiple.html", prod_name = analysis["product_name"])
 
@@ -153,36 +57,44 @@ def features():
             return render_template("error.html")
 
 
+
+
+
+
 @app.route('/rating_analysis')
 def rating_analysis():
-    global analysis
 
+    # To get the number of reviews
+    data_len = len(data["Review_content"])
+    analysis["data_len"] = data_len # global dict -> analysis    
+
+    # Avg rating
+    avg_rating = text_analyzer.avg_rating(data)
+    analysis["avg_rating"] = avg_rating 
+
+    # Showing rating counts
+    rating = data["Rating"].value_counts()
+    analysis["rating"] = rating
+
+    # getting the name of product
     product_name = analysis["product_name"]
 
-    data_len = analysis["data_len"]
-                
-
-
+    # accessing the sentiments from the sentiment data we made in the home page
     pos_rev_count = analysis["pos_count"]
     neg_rev_count = analysis["neg_count"]
     neu_rev_count = analysis["neu_count"]
 
-                
-
-
-    avg_rating = analysis["avg_rating"]
-
-
-    rating = analysis["rating"]
-
-    features = {"Number of reviews (limit 50)":data_len,"Number of positive reviews":pos_rev_count,
+    # arranging all variables in a dict so that we can access while displaying the same
+    features = {"Number of reviews":data_len,"Number of positive reviews":pos_rev_count,
     "Number of neutral reviews":neu_rev_count, "Number of negative reviews":neg_rev_count,
     "Average rating":avg_rating}
 
+    # calculating the value counts of each star rating
+    rating_counter = text_analyzer.rating_value_counter(data)
+    analysis["rating_counter"] = rating_counter
 
-    rating_counter = analysis["rating_counter"]
-
-    date_data = analysis["date_data"]
+    date_data = text_analyzer.date_analyzer(data)
+    analysis["date_data"] = date_data
 
     return render_template("rating_analysis.html",
     features=features, prod_name = product_name,
@@ -191,21 +103,28 @@ def rating_analysis():
 
 @app.route('/sentiment_analysis')
 def sentiment_analysis():
-    global analysis
+    
+    # Accessing the name of product
+    product_name = analysis["product_name"] # global dict -> analysis
+    
+    # Time consuming stuff (emotion mining)
+    emotion_data = emotion.emotion_mining(data) # global data
 
-    product_name = analysis["product_name"]
+    # Getting names of first 20 reviewers
+    names_of_reviewers = [x["Name"] for x in emotion_data]
 
-    names_of_reviewers = analysis["names_of_reviewers"]
-
-
-    sad = analysis["sad"]
-    angry = analysis["angry"]
-    happy = analysis["happy"]
-    surprise = analysis["surprise"]
-    fear = analysis["fear"]
+    sad = [x["Sad"] for x in emotion_data]
+    angry = [x["Angry"] for x in emotion_data]
+    happy = [x["Happy"] for x in emotion_data]
+    surprise = [x["Surprise"] for x in emotion_data] 
+    fear = [x["Fear"] for x in emotion_data]
 
 
-    extreme_sent = analysis["extreme_sent"]
+
+    # ---Sunday 26-09-2021---
+
+
+    extreme_sent = text_analyzer.extreme_sentiments(data)
 
     return render_template("sentiment_analysis.html", 
     names_cust = names_of_reviewers, 
@@ -270,7 +189,7 @@ def single_user_features():
 
 @app.route('/ner')
 def ner():
-    global analysis
+
     ner_pos_labels = analysis["ner_pos_labels"]
     ner_pos_val = analysis["ner_pos_val"]
 
@@ -307,7 +226,6 @@ def ner():
 
 @app.route('/wordcloud')
 def word_cloud():
-    global analysis
     pos_list = analysis["pos_list"]
     neg_list = analysis["neg_list"]
     neu_list= analysis["neu_list"]
@@ -330,3 +248,100 @@ def about_page():
 
 if __name__ == "__main__":
     app.run(debug=False)
+
+
+
+
+
+
+
+
+
+
+
+
+                # pos_list = text_analyzer.lemma_words_para(data[data['Rating'] > 3])
+                # analysis["pos_list"] = pos_list
+
+
+                # neg_list = text_analyzer.lemma_words_para(data[data['Rating'] < 3])
+                # neu_list= text_analyzer.lemma_words_para(data[data['Sentiment_VADER'] == 'Neutral'])
+                # analysis["neg_list"] = neg_list
+                # analysis["neu_list"] = neu_list
+
+
+                # rating_counter = text_analyzer.rating_value_counter(data)
+                # analysis["rating_counter"] = rating_counter
+
+
+                # extreme_sent = text_analyzer.extreme_sentiments(data)
+                # analysis["extreme_sent"] = extreme_sent
+
+                # ner_pos_data = text_analyzer.ner_analysis(data.loc[(data['Rating'] >= 4)])
+                # ner_pos_labels = [x[0] for x in ner_pos_data]
+                # ner_pos_val = [x[1] for x in ner_pos_data]
+                # analysis["ner_pos_labels"] = ner_pos_labels
+                # analysis["ner_pos_val"] = ner_pos_val
+
+                # try:
+                #     ner_neu_data = text_analyzer.ner_analysis(data.loc[(data['Rating'] == 3)])
+                #     ner_neu_labels = [x[0] for x in ner_neu_data]
+                #     ner_neu_val = [x[1] for x in ner_neu_data]
+                #     analysis["ner_neu_labels"] = ner_neu_labels
+                #     analysis["ner_neu_val"] = ner_neu_val
+                # except:
+                #     ner_neu_data = text_analyzer.ner_analysis(sentiment_data.loc[(sentiment_data["Sentiment_VADER"] == "Neutral")])
+                #     ner_neu_labels = [x[0] for x in ner_neu_data]
+                #     ner_neu_val = [x[1] for x in ner_neu_data]
+                #     analysis["ner_neu_labels"] = ner_neu_labels
+                #     analysis["ner_neu_val"] = ner_neu_val
+
+                # ner_neg_data = text_analyzer.ner_analysis(data.loc[(data['Rating'] < 3)])
+                # ner_neg_labels = [x[0] for x in ner_neg_data]
+                # ner_neg_val = [x[1] for x in ner_neg_data]
+                # analysis["ner_neg_labels"] = ner_neg_labels
+                # analysis["ner_neg_val"] = ner_neg_val
+
+                # ngram_pos_data = text_analyzer.ngram_words(data.loc[(data['Rating'] > 3)], 2, 3)
+                # ngram_pos_labels = [x[0] for x in ngram_pos_data]
+                # ngram_pos_val = [x[1] for x in ngram_pos_data]
+                # analysis["ngram_pos_labels"] = ngram_pos_labels
+                # analysis["ngram_pos_val"] = ngram_pos_val
+
+                # try:
+                #     ngram_neu_data = text_analyzer.ngram_words(data.loc[(data['Rating'] == 3)], 2, 3)
+                #     ngram_neu_labels = [x[0] for x in ngram_neu_data]
+                #     ngram_neu_val = [x[1] for x in ngram_neu_data]
+                #     analysis["ngram_neu_labels"] = ngram_neu_labels
+                #     analysis["ngram_neu_val"] = ngram_neu_val
+                # except:
+                #     ngram_neu_data = text_analyzer.ngram_words(sentiment_data.loc[(sentiment_data["Sentiment_VADER"] == "Neutral")], 2, 3)
+                #     ngram_neu_labels = [x[0] for x in ngram_neu_data]
+                #     ngram_neu_val = [x[1] for x in ngram_neu_data]
+                #     analysis["ngram_neu_labels"] = ngram_neu_labels
+                #     analysis["ngram_neu_val"] = ngram_neu_val
+
+                # ngram_neg_data = text_analyzer.ngram_words(data.loc[(data['Rating'] < 3)], 2, 3)
+                # ngram_neg_labels = [x[0] for x in ngram_neg_data]
+                # ngram_neg_val = [x[1] for x in ngram_neg_data]
+                # analysis["ngram_neg_labels"] = ngram_neg_labels
+                # analysis["ngram_neg_val"] = ngram_neg_val
+
+
+                # date_data = text_analyzer.date_analyzer(data)
+                # analysis["date_data"] = date_data
+
+
+
+    # Useless code:
+
+    # analysis["sad"] = sad
+    # analysis["angry"] = angry
+    # analysis["happy"] = happy
+    # analysis["surprise"] =surprise
+    # analysis["fear"] = fear
+    # sad = analysis["sad"]
+    # angry = analysis["angry"]
+    # happy = analysis["happy"]
+    # surprise = analysis["surprise"]
+    # fear = analysis["fear"]
